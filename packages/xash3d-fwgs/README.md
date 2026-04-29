@@ -28,7 +28,7 @@ Need help? Want to share your project or ideas?
 
 ## 🧩 Usage
 
-To get started quickly, check out the [examples/](https://github.com/yohimik/webxash3d-fwgs/tree/main/packages/examples) folder for real-world usage with:
+To get started quickly, check out the [examples/](https://github.com/yohimik/webxash3d-fwgs/tree/main/examples) folder for real-world usage with:
 
 * WebRTC transport
 * File system mount
