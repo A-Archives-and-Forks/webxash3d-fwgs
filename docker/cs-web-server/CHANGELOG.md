@@ -1,5 +1,11 @@
 # Changelog
 
+## cs-web-server@0.2.0 (2026-07-28)
+
+### Features
+
+- configurable websocket keepalive timeouts PONG_WAIT_SECONDS and WRITE_WAIT_SECONDS
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
