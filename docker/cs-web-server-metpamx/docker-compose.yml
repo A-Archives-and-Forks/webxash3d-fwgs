@@ -6,7 +6,7 @@ services:
       dockerfile: ./docker/cs-web-server-metpamx/Dockerfile
       tags:
         - yohimik/cs-web-server-metpamx:latest
-        - yohimik/cs-web-server-metpamx:${TAG}
+        - yohimik/cs-web-server-metpamx:${DISPAT_NEW_VERSION}
     restart: always
     platform: linux/386
     environment:

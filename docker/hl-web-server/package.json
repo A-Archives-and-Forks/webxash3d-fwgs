@@ -11,6 +11,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "cs-web-server": "workspace:*"
+    "cs-web-server": "workspace:*",
+    "hlsdk-portable": "0.1.2",
+    "xash3d-fwgs": "1.2.2"
   }
 }

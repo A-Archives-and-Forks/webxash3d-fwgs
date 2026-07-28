@@ -96,23 +96,37 @@ async function findSubmoduleDir(pkgPath: string): Promise<string | null> {
 }
 
 async function run(): Promise<void> {
+    const targetFolder = process.argv[2];
+
+    if (!targetFolder) {
+        console.error('❌ Please provide a folder name as the first argument, e.g. `ts-node update-versions.ts my-package`');
+        process.exit(1);
+    }
+
+    const pkgPath = path.join(packagesDir, targetFolder);
+
     try {
-        const packages = await fs.readdir(packagesDir);
+        const stat = await fs.stat(pkgPath).catch(() => null);
+        if (!stat || !stat.isDirectory()) {
+            console.error(`❌ Folder not found: ${pkgPath}`);
+            process.exit(1);
+        }
 
-        await Promise.all(packages.map(async p => {
-            const pkgPath = path.join(packagesDir, p);
-            if (!(await fs.stat(pkgPath)).isDirectory()) return
+        const submodulePath = await findSubmoduleDir(pkgPath);
+        if (!submodulePath) {
+            console.error(`❌ No submodule found in ${pkgPath}`);
+            process.exit(1);
+        }
 
-            const submodulePath = await findSubmoduleDir(pkgPath)
-            if (!submodulePath) return
+        const hash = await getSubmoduleHash(submodulePath);
+        if (!hash) {
+            console.error(`❌ Could not determine submodule hash for ${pkgPath}`);
+            process.exit(1);
+        }
 
-            const hash = await getSubmoduleHash(submodulePath);
-            if (!hash) return
-
-            await updatePackageVersion(pkgPath, hash);
-        }))
+        await updatePackageVersion(pkgPath, hash);
     } catch (err) {
-        console.error(`❌ Failed to update versions: ${(err as Error).message}`);
+        console.error(`❌ Failed to update version: ${(err as Error).message}`);
         process.exit(1);
     }
 }

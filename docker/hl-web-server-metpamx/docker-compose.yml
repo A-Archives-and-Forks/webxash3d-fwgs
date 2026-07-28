@@ -6,7 +6,7 @@ services:
       dockerfile: ./docker/hl-web-server-metpamx/Dockerfile
       tags:
         - yohimik/hl-web-server-metpamx:latest
-        - yohimik/hl-web-server-metpamx:${TAG}
+        - yohimik/hl-web-server-metpamx:${DISPAT_NEW_VERSION}
     restart: always
     platform: linux/386
     environment:

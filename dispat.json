@@ -1,0 +1,43 @@
+{
+  "scripts": {
+    "build-docker": "docker compose build",
+    "publish-docker": "docker compose push",
+    "build-npm": "pnpm run build",
+    "publish-npm": "npm publish --provenance",
+    "version": "pnpm ts-node ../../scripts/version.ts && pnpm install"
+  },
+  "spaces": {
+    "npm": {
+      "path": "packages",
+      "isBuildWaitingPublish": true,
+      "revertOnFail": true,
+      "buildScript": "build-npm",
+      "versionScript": "version"
+    },
+    "docker": {
+      "path": "docker",
+      "isBuildWaitingPublish": true,
+      "revertOnFail": true,
+      "buildScript": "build-docker",
+      "versionScript": "version"
+    }
+  },
+  "commit": {
+    "enabled": true,
+    "push": true
+  },
+  "dependencies": [
+    { "consumer": "cs-web-server", "provider": "cs16-client" },
+    { "consumer": "cs-web-server", "provider": "xash3d-fwgs" },
+    { "consumer": "cs-web-server-metpamx", "provider": "cs-web-server" },
+    { "consumer": "hl-web-server", "provider": "cs-web-server" },
+    { "consumer": "hl-web-server", "provider": "hlsdk-portable" },
+    { "consumer": "hl-web-server", "provider": "xash3d-fwgs" },
+    { "consumer": "hl-web-server-metpamx", "provider": "hl-web-server" },
+    { "consumer": "hl-web-server-metpamx", "provider": "cs-web-server-metpamx" }
+  ],
+  "initials": {
+    "cs-web-server-metpamx": "0.1.1",
+    "hl-web-server-metpamx": "0.1.1"
+  }
+}

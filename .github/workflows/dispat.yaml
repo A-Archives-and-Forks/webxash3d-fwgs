@@ -1,0 +1,66 @@
+name: Dispat
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Configure git identity
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download latest release binary
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OTHER_REPO: yohimik/dispat
+          ASSET_NAME: dispat-linux-amd64
+        run: |
+          set -euo pipefail
+          gh release download --repo "$OTHER_REPO" --pattern "$ASSET_NAME" --output ./dispat
+          chmod +x ./dispat
+
+      - name: Verify binary checksum
+        env:
+          EXPECTED_SHA256: "401dde5faa660267888f4a6fc2b0d7203cc365831324b2f3a039b051322c47ad"
+        run: |
+          set -euo pipefail
+          ACTUAL_SHA256="$(sha256sum ./dispat | awk '{print $1}')"
+          if [ "$ACTUAL_SHA256" != "$EXPECTED_SHA256" ]; then
+            echo "::error::Checksum mismatch for ./dispat. Refusing to execute."
+            echo "expected: $EXPECTED_SHA256"
+            echo "actual:   $ACTUAL_SHA256"
+            exit 1
+          fi
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Run binary
+        run: ./dispat

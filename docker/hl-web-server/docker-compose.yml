@@ -6,7 +6,7 @@ services:
       dockerfile: ./docker/hl-web-server/Dockerfile
       tags:
         - yohimik/hl-web-server:latest
-        - yohimik/hl-web-server:${TAG}
+        - yohimik/hl-web-server:${DISPAT_NEW_VERSION}
     restart: always
     platform: linux/386
     environment:

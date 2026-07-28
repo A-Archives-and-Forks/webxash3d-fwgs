@@ -3,14 +3,9 @@
   "private": true,
   "version": null,
   "scripts": {
-    "rollback-last": "git reset --soft HEAD~1",
-    "commit-publish": "git diff --name-only ORIG_HEAD | xargs git add && git commit -C ORIG_HEAD && for t in $(git tag --points-at ORIG_HEAD); do git tag -f $t HEAD; done",
-    "update-commits": "ts-node scripts/update-commits.ts",
-    "update-commits-ci": "pnpm run rollback-last && pnpm run update-commits && pnpm run commit-publish"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",
-    "lerna": "9.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
