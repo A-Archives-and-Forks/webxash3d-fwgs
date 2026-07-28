@@ -48,7 +48,7 @@ jobs:
 
       - name: Verify binary checksum
         env:
-          EXPECTED_SHA256: "401dde5faa660267888f4a6fc2b0d7203cc365831324b2f3a039b051322c47ad"
+          EXPECTED_SHA256: "d2e908b16be16ba92c0d4d6564380d31435ba4a2d56751cb52390e993e0a93ec"
         run: |
           set -euo pipefail
           ACTUAL_SHA256="$(sha256sum ./dispat | awk '{print $1}')"
