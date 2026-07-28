@@ -3,15 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
-	"github.com/jinzhu/configor"
-	"github.com/pion/ice/v4"
-	"github.com/pion/interceptor"
-	"github.com/pion/logging"
-	"github.com/pion/rtcp"
-	"github.com/pion/rtp"
-	"github.com/pion/webrtc/v4"
-	"github.com/yohimik/goxash3d-fwgs/pkg"
 	"io"
 	"math/rand"
 	"net/http"
@@ -21,6 +12,16 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/gorilla/websocket"
+	"github.com/jinzhu/configor"
+	"github.com/pion/ice/v4"
+	"github.com/pion/interceptor"
+	"github.com/pion/logging"
+	"github.com/pion/rtcp"
+	"github.com/pion/rtp"
+	"github.com/pion/webrtc/v4"
+	"github.com/yohimik/goxash3d-fwgs/pkg"
 )
 
 var net = NewSFUNet()
@@ -79,6 +80,43 @@ var (
 	trackLocals     map[string]*webrtc.TrackLocalStaticRTP
 
 	log = logging.NewDefaultLoggerFactory().NewLogger("sfu-ws")
+)
+
+const DefaultPongWaitSeconds = 60
+
+func parsePongWait() time.Duration {
+	v := os.Getenv("PONG_WAIT_SECONDS")
+	s, err := strconv.Atoi(v)
+	if err != nil {
+		return DefaultPongWaitSeconds
+	}
+	if s < 1 {
+		return DefaultPongWaitSeconds
+	}
+	return time.Duration(s)
+}
+
+const DefaultWriteWaitSeconds = 10
+
+func parseWriteWait() time.Duration {
+	v := os.Getenv("WRITE_WAIT_SECONDS")
+	s, err := strconv.Atoi(v)
+	if err != nil {
+		return DefaultWriteWaitSeconds
+	}
+	if s < 1 {
+		return DefaultWriteWaitSeconds
+	}
+	return time.Duration(s)
+}
+
+// Websocket keepalive tuning. pongWait is how long we'll wait for a pong
+// (or any other message) before considering the connection dead. pingPeriod
+// must be less than pongWait so pings go out with time to spare.
+var (
+	pongWait   = parsePongWait() * time.Second
+	pingPeriod = (pongWait * 9) / 10
+	writeWait  = parseWriteWait() * time.Second
 )
 
 type websocketMessage struct {
@@ -278,6 +316,37 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) { // nolint
 	// When this frame returns close the Websocket
 	defer c.Close() //nolint
 
+	// --- Ping/pong keepalive setup ---
+	// Track liveness: any pong (or other) frame from the client resets the
+	// read deadline. If the client stops responding, reads will time out and
+	// the handler will exit, which triggers the deferred cleanup.
+	c.SetReadDeadline(time.Now().Add(pongWait)) // nolint
+	c.SetPongHandler(func(string) error {
+		c.SetReadDeadline(time.Now().Add(pongWait)) // nolint
+		return nil
+	})
+
+	pingDone := make(chan struct{})
+	defer close(pingDone)
+
+	go func() {
+		ticker := time.NewTicker(pingPeriod)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ticker.C:
+				if err := c.Ping(); err != nil {
+					log.Errorf("Failed to send ping: %v", err)
+					return
+				}
+			case <-pingDone:
+				return
+			}
+		}
+	}()
+	// --- end ping/pong keepalive setup ---
+
 	// Create new PeerConnection
 	peerConnection, err := api.NewPeerConnection(webrtc.Configuration{})
 	if err != nil {
@@ -430,6 +499,9 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) { // nolint
 			return
 		}
 
+		// Any inbound frame counts as liveness too, not just pongs.
+		c.SetReadDeadline(time.Now().Add(pongWait)) // nolint
+
 		if err := json.Unmarshal(raw, &message); err != nil {
 			log.Errorf("Failed to unmarshal json to message: %v", err)
 
@@ -470,6 +542,14 @@ func websocketHandler(w http.ResponseWriter, r *http.Request) { // nolint
 			if isNeedSignaling {
 				signalPeerConnections()
 			}
+		case "ping":
+			// Application-level ping from the client (as opposed to the
+			// websocket control frame) - just echo a pong event back.
+			if err := c.WriteJSON("pong", nil); err != nil {
+				log.Errorf("Failed to write pong: %v", err)
+
+				return
+			}
 		default:
 			log.Errorf("unknown message: %+v", message)
 		}
@@ -486,10 +566,21 @@ func (t *threadSafeWriter) WriteJSON(event string, v interface{}) error {
 	t.Lock()
 	defer t.Unlock()
 
+	t.Conn.SetWriteDeadline(time.Now().Add(writeWait)) // nolint
+
 	return t.Conn.WriteJSON(struct {
 		Event string `json:"event"`
 		Data  any    `json:"data"`
 	}{event, v})
+}
+
+// Ping sends a websocket control-frame ping. Pairs with the pong handler
+// registered in websocketHandler to detect and clean up dead connections.
+func (t *threadSafeWriter) Ping() error {
+	t.Lock()
+	defer t.Unlock()
+
+	return t.Conn.WriteControl(websocket.PingMessage, nil, time.Now().Add(writeWait))
 }
 
 const html = ""

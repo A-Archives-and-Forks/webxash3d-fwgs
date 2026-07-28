@@ -19,7 +19,10 @@ in-browser gameplay and remote multiplayer support.
 
 ## 🎯 Looking for AMX Mod X Support?
 
-If you want **AMX Mod X and Metamod pre-installed and ready to use**, check out the [cs-web-server-metpamx](https://github.com/yohimik/webxash3d-fwgs/tree/main/docker/cs-web-server-metpamx) variant. It includes:
+If you want **AMX Mod X and Metamod pre-installed and ready to use**, check out
+the [cs-web-server-metpamx](https://github.com/yohimik/webxash3d-fwgs/tree/main/docker/cs-web-server-metpamx) variant.
+It includes:
+
 - Pre-configured Metamod-P
 - AMX Mod X with all base modules
 - Ready for custom plugins out of the box
@@ -123,20 +126,22 @@ Then open `http://<your-server-ip>:27016` in your browser!
 
 ### Server Configuration
 
-| Variable               | Description                                            | Example             |
-|------------------------|--------------------------------------------------------|---------------------|
-| `IP`                   | Public IP address for WebRTC connection                | `123.45.67.89`      |
-| `PORT`                 | UDP port for CS server (must be open)                  | `27018`             |
-| `DISABLE_X_POWERED_BY` | Set to `true` to remove the `X-Powered-By` HTTP header | `true`              |
-| `X_POWERED_BY_VALUE`   | Custom value for `X-Powered-By` header if not disabled | `CS 1.6 Web Server` |
+| Variable               | Description                                                                                                                                        | Example             |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| `IP`                   | Public IP address for WebRTC connection                                                                                                            | `123.45.67.89`      |
+| `PORT`                 | UDP port for CS server (must be open)                                                                                                              | `27018`             |
+| `DISABLE_X_POWERED_BY` | Set to `true` to remove the `X-Powered-By` HTTP header                                                                                             | `true`              |
+| `X_POWERED_BY_VALUE`   | Custom value for `X-Powered-By` header if not disabled                                                                                             | `CS 1.6 Web Server` |
+| `PONG_WAIT_SECONDS`    | Seconds to wait for a pong/any message before the WebSocket connection is considered dead (must be a positive integer, otherwise defaults to `60`) | `60`                |
+| `WRITE_WAIT_SECONDS`   | Write deadline in seconds for WebSocket writes and pings (must be a positive integer, otherwise defaults to `10`)                                  | `10`                |
 
 ### Engine Configuration
 
-| Variable            | Description                                             | Default                                         |
-|---------------------|---------------------------------------------------------|-------------------------------------------------|
-| `GAME_DIR`          | Game directory name                                     | `cstrike`                                       |
-| `ENGINE_ARGS`       | Comma-separated engine arguments                        | `-windowed,-game,cstrike`                       |
-| `ENGINE_CONSOLE`    | Comma-separated console commands to execute on startup  | `_vgui_menus 0`                                 |
+| Variable         | Description                                            | Default                   |
+|------------------|--------------------------------------------------------|---------------------------|
+| `GAME_DIR`       | Game directory name                                    | `cstrike`                 |
+| `ENGINE_ARGS`    | Comma-separated engine arguments                       | `-windowed,-game,cstrike` |
+| `ENGINE_CONSOLE` | Comma-separated console commands to execute on startup | `_vgui_menus 0`           |
 
 ### Library Paths
 
@@ -161,13 +166,12 @@ To include custom plugins:
 
 ## 🌐 Discord Community
 
-Need help? Want to share your project or ideas?
-**[Join our Discord community](https://discord.gg/cRNGjWfTDd)** to connect with others!
+Need help? Want to share your project or ideas? **[Join our Discord community](https://discord.gg/cRNGjWfTDd)** to
+connect with others!
 
 ## 📜 License
 
-This project is licensed under the MIT License.
-See the [LICENSE](./LICENSE.md) file for more information.
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE.md) file for more information.
 
 ## 📝 Changelog
 
@@ -176,4 +180,5 @@ list of updates and release history.
 
 ## 🔗 Related Projects
 
-- [cs-web-server-metpamx](https://github.com/yohimik/webxash3d-fwgs/tree/main/docker/cs-web-server-metpamx) - Version with AMX Mod X & Metamod pre-installed
+- [cs-web-server-metpamx](https://github.com/yohimik/webxash3d-fwgs/tree/main/docker/cs-web-server-metpamx) - Version
+  with AMX Mod X & Metamod pre-installed

@@ -12,6 +12,7 @@
       "isBuildWaitingPublish": true,
       "revertOnFail": true,
       "buildScript": "build-npm",
+      "publishScript": "publish-npm",
       "versionScript": "version"
     },
     "docker": {
@@ -19,6 +20,7 @@
       "isBuildWaitingPublish": true,
       "revertOnFail": true,
       "buildScript": "build-docker",
+      "publishScript": "publish-docker",
       "versionScript": "version"
     }
   },
