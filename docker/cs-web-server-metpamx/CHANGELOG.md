@@ -1,5 +1,11 @@
 # Changelog
 
+## cs-web-server-metpamx@0.1.3 (2026-08-02)
+
+### Dependencies
+
+- updated providers: cs-web-server
+
 ## cs-web-server-metpamx@0.1.2 (2026-07-28)
 
 ### Dependencies

@@ -1,5 +1,11 @@
 # Changelog
 
+## hl-web-server@0.1.3 (2026-08-02)
+
+### Dependencies
+
+- updated providers: cs-web-server
+
 ## hl-web-server@0.1.2 (2026-07-28)
 
 ### Dependencies

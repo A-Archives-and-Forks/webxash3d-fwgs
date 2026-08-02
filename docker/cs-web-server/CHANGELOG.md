@@ -1,5 +1,11 @@
 # Changelog
 
+## cs-web-server@0.3.0 (2026-08-02)
+
+### Features
+
+- optional admin panel, logs improves, client reconnection, config files
+
 ## cs-web-server@0.2.0 (2026-07-28)
 
 ### Features
