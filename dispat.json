@@ -1,7 +1,7 @@
 {
   "scripts": {
     "build-docker": "docker compose build",
-    "publish-docker": "docker compose push",
+    "publish-docker": "../../scripts/readme.sh && docker compose push",
     "build-npm": "pnpm run build",
     "publish-npm": "npm publish --provenance",
     "version": "pnpm ts-node ../../scripts/version.ts && pnpm install"
