@@ -5,7 +5,7 @@ set -euo pipefail
 : "${DOCKER_PASSWORD:?DOCKER_PASSWORD env var is required}"
 
 IMAGE_NAME="yohimik/${DISPAT_PACKAGE}"
-README_PATH="docker/${DISPAT_PACKAGE}/README.docker.md"
+README_PATH="README.docker.md"
 
 DESCRIPTION=$(jq -Rs . < "$README_PATH")
 
