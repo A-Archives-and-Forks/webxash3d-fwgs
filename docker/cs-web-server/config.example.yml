@@ -1,0 +1,62 @@
+# Example configuration for cs-web-server.
+#
+# Every value here is optional and can equally be supplied as an environment
+# variable (see the env name in each comment). Resolution order is:
+#   `default` tag  ->  config file  ->  environment variable
+# so an environment variable always wins.
+#
+# Copy to `config.yml` (auto-detected), or point CONFIG_FILE at any path.
+# configor also picks up environment-specific overlays automatically:
+# with CONFIGOR_ENV=production, `config.production.yml` is merged on top.
+#
+# Note: this file is also configor's fallback. If CONFIG_FILE names a
+# `config.yml` that does not exist, configor loads THIS file instead and says so
+# on stdout.
+
+server:
+  addr: ":27016"          # ADDR - HTTP listen address
+  # port: 27015           # PORT - pin ICE to one UDP port
+  # ip: "203.0.113.10"    # IP - advertise as 1-to-1 NAT host candidate
+  disable_x_powered_by: false   # DISABLE_X_POWERED_BY
+  x_powered_by_value: yohimik   # X_POWERED_BY_VALUE
+
+engine:
+  game_dir: cstrike       # GAME_DIR (required)
+  # Lists accept a YAML sequence here, or a comma-separated string via env.
+  arguments:              # ENGINE_ARGS - e.g. "-windowed,-console"
+    - "-windowed"
+  console:                # ENGINE_CONSOLE - run at startup
+    - "hostname My Server"
+
+libraries:
+  client: /cstrike/cl_dlls/client.wasm        # CLIENT_WASM_PATH (required)
+  server: /cstrike/dlls/cs.wasm               # SERVER_WASM_PATH (required)
+  menu: /menu.wasm                            # MENU_WASM_PATH (required)
+  extras: /extras.pk3                         # EXTRAS_PATH (required)
+  filesystem: /filesystem_stdio.wasm          # FILESYSTEM_WASM_PATH (required)
+  dynamic_libraries:                          # DYNAMIC_LIBRARIES (required)
+    - filesystem_stdio.so
+  # Maps engine-internal paths to served URLs. Via env this is the
+  # "from:to,from:to" form; here it is a normal mapping.
+  files_map:                                  # FILES_MAP (required)
+    xash.wasm: /xash.wasm
+
+admin:
+  username: admin         # ADMIN_PANEL_USER
+  password: ""            # ADMIN_PANEL_PASSWORD - blank disables the panel
+  token_ttl_hours: 24     # ADMIN_TOKEN_TTL_HOURS
+  login_rate_limit: 5     # ADMIN_LOGIN_RATE_LIMIT - attempts per minute
+  rcon_rate_limit: 30     # ADMIN_RCON_RATE_LIMIT - commands per minute
+  log_buffer_entries: 1000 # ADMIN_LOG_BUFFER - scrollback kept for new clients
+
+log:
+  level: info             # LOG_LEVEL - server (trace, debug, info, warn, error, fatal)
+  # pretty = human-readable console output, json = one record per line.
+  # Xash3D console output is wrapped either way, as {"component":"engine","log":"..."}.
+  format: pretty          # LOG_FORMAT
+  # Browser clients (game + admin panel), served via GET /v1/config.
+  client_level: info      # CLIENT_LOG_LEVEL - pino levels
+
+webrtc:
+  pong_wait_seconds: 60   # PONG_WAIT_SECONDS
+  write_wait_seconds: 10  # WRITE_WAIT_SECONDS

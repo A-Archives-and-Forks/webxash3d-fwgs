@@ -141,7 +141,7 @@ Every variable above can instead live in a configuration file. Loading is handle
 `CONFIGOR_ENV` is set — with
 `CONFIGOR_ENV=production`, `config.production.yml` is applied on top of `config.yml`.
 
-See [`config.example.yml`](./config.example.yml) for a fully commented file.
+See [`config.example.yml`](https://github.com/yohimik/webxash3d-fwgs/blob/main/docker/cs-web-server/config.example.yml) for a fully commented file.
 
 List and map values accept either form. In a file they are native YAML:
 
